@@ -3,14 +3,14 @@ FROM 0x01be/ocaml as build
 RUN apk add --no-cache --virtual coq-build-dependencies \
     git \
     build-base \
-    gtk+3.0-dev \
     perl \
+    bash \
+    wget \
+    bubblewrap \
+    gtk+3.0-dev \
+    gtksourceview-dev \
     gmp-dev \
-    m4 \
-    bubblewrap
-
-RUN apk add gtksourceview-dev
-RUN apk add wget
+    m4
 
 RUN opam install -y \
     ocamlfind \

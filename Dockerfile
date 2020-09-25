@@ -1,27 +1,17 @@
-FROM 0x01be/ocaml as build
+FROM 0x01be/coq:build as build
 
-RUN apk add --no-cache --virtual coq-build-dependencies \
-    git \
-    build-base \
-    perl \
-    bash \
-    wget \
+FROM alpine
+
+RUN apk add --no-cache --virtual coq-runtime-dependencies \
     bubblewrap \
-    gtk+3.0-dev \
-    gtksourceview-dev \
-    gmp-dev \
-    m4
+    gtk+3.0 \
+    gtksourceview \
+    gmp \
+    m4 \
+    libx11
 
-RUN opam install -y \
-    ocamlfind \
-    zarith \
-    lablgtk3-sourceview3
+COPY --from=build /opt/ /opt/
+COPY --from=build /root/.opam/ /root/.opam/
 
-ENV COQ_REVISION master
-RUN git clone --depth 1 --branch ${COQ_REVISION} https://github.com/coq/coq.git /coq
-
-WORKDIR /coq
-RUN ./configure -prefix=/opt/coq
-RUN make
-RUN make install
+ENV PATH $PATH:/opt/coq/bin/:/opt/ocaml/bin/:/opt/opam/bin/
 
